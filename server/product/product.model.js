@@ -25,7 +25,10 @@ const ProductSchema = new mongoose.Schema({
   inventory: {
     type: Number,
   },
-  quantitySold: Number,
+  quantitySold: {
+    type: Number,
+    default: 0,
+  },
   cate: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Cate',
@@ -37,7 +40,6 @@ const ProductSchema = new mongoose.Schema({
   color: [{ type: String }],
   mainImage: {
     type: String,
-    required: true
   },
   subImage: [{
     type: String,
@@ -53,6 +55,10 @@ const ProductSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  }
 
 }, {
   timestamps: true
@@ -87,7 +93,7 @@ ProductSchema.statics = {
    * @returns {Promise<Product[]>}
    */
   list({ skip = 0, limit = 50 } = {}) {
-    return this.find()
+    return this.find({ isDeleted: false })
       .sort({ createdAt: -1 })
       .skip(+skip)
       .limit(+limit)

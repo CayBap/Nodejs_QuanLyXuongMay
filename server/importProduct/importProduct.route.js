@@ -11,7 +11,7 @@ router.route('/')
   .get(authCtrl.authen, importProductCtrl.list)
 
   /** POST /api/importProducts - Create new importProduct */
-  .post(importProductCtrl.create);
+  .post(authCtrl.authen, importProductCtrl.create);
 
 router.route('/:importProductId')
   /** GET /api/importProducts/:importProductId - Get importProduct */

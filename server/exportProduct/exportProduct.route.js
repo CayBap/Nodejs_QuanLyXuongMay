@@ -11,7 +11,7 @@ router.route('/')
   .get(authCtrl.authen, exportProductCtrl.list)
 
   /** POST /api/exportProducts - Create new exportProduct */
-  .post(exportProductCtrl.create);
+  .post(authCtrl.authen, exportProductCtrl.create);
 
 router.route('/:exportProductId')
   /** GET /api/exportProducts/:exportProductId - Get exportProduct */

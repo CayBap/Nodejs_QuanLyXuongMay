@@ -29,11 +29,11 @@ function get(req, res) {
 function create(req, res, next) {
   const importProduct = new ImportProduct({
     name: req.body.name,
-    shrortName: req.body.shrortName,
+    shortName: req.body.shortName,
     unit: req.body.unit,
     totalPrice: req.body.totalPrice,
     timeToEnd: req.body.timeToEnd,
-    amout: req.body.amout,
+    amount: req.body.amount,
     createdBy: req.currentUser._id,
   });
 
@@ -55,7 +55,7 @@ function update(req, res, next) {
   importProduct.unit = req.body.unit;
   importProduct.totalPrice = req.body.totalPrice;
   importProduct.timeToEnd = req.body.timeToEnd;
-  importProduct.amout = req.body.amout;
+  importProduct.amount = req.body.amount;
   importProduct.save()
     .then(savedImportProduct => res.json(savedImportProduct))
     .catch(e => next(e));

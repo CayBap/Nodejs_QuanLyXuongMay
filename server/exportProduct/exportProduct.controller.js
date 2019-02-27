@@ -29,15 +29,12 @@ function get(req, res) {
 function create(req, res, next) {
   const exportProduct = new ExportProduct({
     name: req.body.name,
-    shrortName: req.body.shrortName,
-    unit: req.body.unit,
     totalPrice: req.body.totalPrice,
     timeToEnd: req.body.timeToEnd,
     productId: req.body.productId,
-    amout: req.body.amout,
+    amount: req.body.amount,
     createdBy: req.currentUser._id,
   });
-
   exportProduct.save()
     .then(savedExportProduct => res.json(savedExportProduct))
     .catch(e => next(e));
@@ -50,14 +47,12 @@ function create(req, res, next) {
  * @returns {ExportProduct}
  */
 function update(req, res, next) {
-  const exportProduct = req.ExportProduct;
+  const exportProduct = req.exportProduct;
   exportProduct.name = req.body.name;
-  exportProduct.shortName = req.body.shortName;
-  exportProduct.unit = req.body.unit;
   exportProduct.totalPrice = req.body.totalPrice;
   exportProduct.timeToEnd = req.body.timeToEnd;
   exportProduct.productId = req.body.productId;
-  exportProduct.amout = req.body.amout;
+  exportProduct.amount = req.body.amount;
   exportProduct.save()
     .then(savedExportProduct => res.json(savedExportProduct))
     .catch(e => next(e));
@@ -81,8 +76,9 @@ function list(req, res, next) {
  * @returns {ExportProduct}
  */
 function remove(req, res, next) {
-  const exportProduct = req.ExportProduct;
-  exportProduct.remove()
+  const exportProduct = req.exportProduct;
+  exportProduct.isDeleted = true;
+  exportProduct.save()
     .then(deletedExportProduct => res.json(deletedExportProduct))
     .catch(e => next(e));
 }

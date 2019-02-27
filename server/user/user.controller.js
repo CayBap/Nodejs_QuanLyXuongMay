@@ -1,4 +1,5 @@
 const User = require('./user.model');
+const ProductUser = require('../productUser/productUser.model');
 
 /**
  * Load user and append to req.
@@ -75,6 +76,31 @@ function list(req, res, next) {
     .then(users => res.json(users))
     .catch(e => next(e));
 }
+/**
+ * Lấy bảng lương.
+ * @property {number} req.query.skip - Number of users to be skipped.
+ * @property {number} req.query.limit - Limit number of users to be returned.
+ * @returns {User[]}
+ */
+function listUserDash(req, res, next) {
+  const { limit = 50, skip = 0 } = req.query;
+  User.list({ limit, skip })
+    .then((users) => {
+      let newUsers = [];
+      newUsers = users.map(async (user) => {
+        const productUser = await ProductUser.find({ userId: user._id }).populate('productId');
+        return {
+          user,
+          productUser,
+        };
+      });
+      Promise.all(newUsers).then((reusult) => {
+        const newResult = reusult;
+        res.json(newResult);
+      });
+    })
+    .catch(e => next(e));
+}
 
 /**
  * Delete user.
@@ -87,4 +113,4 @@ function remove(req, res, next) {
     .catch(e => next(e));
 }
 
-module.exports = { load, get, create, update, list, remove };
+module.exports = { load, get, create, update, list, remove, listUserDash };

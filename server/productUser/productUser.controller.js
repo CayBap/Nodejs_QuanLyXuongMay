@@ -28,16 +28,16 @@ function get(req, res) {
  */
 function create(req, res, next) {
   const productUser = new ProductUser({
-    name: req.body.name,
-    shrortName: req.body.shrortName,
-    unit: req.body.unit,
-    totalPrice: req.body.totalPrice,
-    timeToEnd: req.body.timeToEnd,
+    nameForUser: req.body.nameForUser,
+    productName: req.body.productName,
+    userId: req.body.userId,
     productId: req.body.productId,
-    amout: req.body.amout,
+    amount: req.body.amount,
+    color: req.body.color,
+    size: req.body.size,
+    timeToEnd: req.body.timeToEnd,
     createdBy: req.currentUser._id,
   });
-
   productUser.save()
     .then(savedProductUser => res.json(savedProductUser))
     .catch(e => next(e));
@@ -50,14 +50,30 @@ function create(req, res, next) {
  * @returns {ProductUser}
  */
 function update(req, res, next) {
-  const productUser = req.ProductUser;
-  productUser.name = req.body.name;
-  productUser.shortName = req.body.shortName;
-  productUser.unit = req.body.unit;
-  productUser.totalPrice = req.body.totalPrice;
+  const productUser = req.productUser;
+  productUser.nameForUser = req.body.nameForUser;
+  productUser.productName = req.body.productName;
+  productUser.userId = req.body.userId;
+  productUser.productId = req.body.productId;
+  productUser.color = req.body.color;
+  productUser.size = req.body.size;
   productUser.timeToEnd = req.body.timeToEnd;
   productUser.productId = req.body.productId;
-  productUser.amout = req.body.amout;
+  productUser.amount = req.body.amount;
+  productUser.save()
+    .then(savedProductUser => res.json(savedProductUser))
+    .catch(e => next(e));
+}
+
+/**
+ * Update existing ProductUser
+ * @property {string} req.body.ProductUsername - The ProductUsername of ProductUser.
+ * @property {string} req.body.mobileNumber - The mobileNumber of ProductUser.
+ * @returns {ProductUser}
+ */
+function updateStatus(req, res, next) {
+  const productUser = req.productUser;
+  productUser.finished = !productUser.finished;
   productUser.save()
     .then(savedProductUser => res.json(savedProductUser))
     .catch(e => next(e));
@@ -76,15 +92,24 @@ function list(req, res, next) {
     .catch(e => next(e));
 }
 
+function listByUser(req, res, next) {
+  console.log(req.params);
+  ProductUser.find({ userId: req.params.userId }).populate('productId').then((result) => {
+    res.json(result);
+  }).catch((err) => {
+    next(err);
+  });
+}
 /**
  * Delete ProductUser.
  * @returns {ProductUser}
  */
 function remove(req, res, next) {
-  const productUser = req.ProductUser;
-  productUser.remove()
+  const productUser = req.productUser;
+  productUser.isDeleted = true;
+  productUser.save()
     .then(deletedProductUser => res.json(deletedProductUser))
     .catch(e => next(e));
 }
 
-module.exports = { load, get, create, update, list, remove };
+module.exports = { load, get, create, update, list, remove, updateStatus, listByUser };

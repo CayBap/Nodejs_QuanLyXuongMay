@@ -13,16 +13,13 @@ const ExportProductSchema = new mongoose.Schema({
   shortName: {
     type: String,
   },
-  unit: {
-    type: String,
-  },
   totalPrice: {
     type: Number,
   },
   timeToEnd: {
     type: String,
   },
-  amout: {
+  amount: {
     type: Number,
   },
   productId: {
@@ -30,12 +27,15 @@ const ExportProductSchema = new mongoose.Schema({
     ref: 'Product',
     required: true,
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },
-
 }, {
   timestamps: true
 });
@@ -69,7 +69,7 @@ ExportProductSchema.statics = {
    * @returns {Promise<ExportProduct[]>}
    */
   list({ skip = 0, limit = 50 } = {}) {
-    return this.find()
+    return this.find({ isDeleted: false })
       .sort({ createdAt: -1 })
       .skip(+skip)
       .limit(+limit)

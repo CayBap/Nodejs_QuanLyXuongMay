@@ -11,7 +11,7 @@ router.route('/')
   .get(authCtrl.authen, productCtrl.list)
 
   /** POST /api/products - Create new product */
-  .post(productCtrl.create);
+  .post(authCtrl.authen, productCtrl.create);
 
 router.route('/:productId')
   /** GET /api/products/:productId - Get product */

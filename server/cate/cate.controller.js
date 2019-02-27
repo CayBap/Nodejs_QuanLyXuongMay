@@ -29,7 +29,7 @@ function get(req, res) {
 function create(req, res, next) {
   const cate = new Cate({
     name: req.body.name,
-    shrortName: req.body.shortName,
+    shortName: req.body.shortName,
     address: req.body.address,
     createdBy: req.currentUser._id,
     description: req.body.description
@@ -47,10 +47,9 @@ function create(req, res, next) {
  * @returns {Cate}
  */
 function update(req, res, next) {
-  const cate = req.Cate;
+  const cate = req.cate;
   cate.name = req.body.name;
   cate.shortName = req.body.shortName;
-  cate.address = req.body.address;
   cate.description = req.body.description;
   cate.save()
     .then(savedCate => res.json(savedCate))
@@ -75,7 +74,7 @@ function list(req, res, next) {
  * @returns {Cate}
  */
 function remove(req, res, next) {
-  const cate = req.Cate;
+  const cate = req.cate;
   cate.isDelete = true;
   cate.save()
     .then(deletedCate => res.json(deletedCate))

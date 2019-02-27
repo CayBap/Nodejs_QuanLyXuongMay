@@ -41,7 +41,11 @@ const UserSchema = new mongoose.Schema({
 
   //   type: mongoose.Schema.Types.ObjectId,
   // }],
-  isDelete: {
+  gender: {
+    type: Boolean,
+    default: true,
+  },
+  isDeleted: {
     type: Boolean,
     default: false,
   },
@@ -133,7 +137,7 @@ UserSchema.statics = {
    * @returns {Promise<User[]>}
    */
   list({ skip = 0, limit = 50 } = {}) {
-    return this.find()
+    return this.find({ isDeleted: false })
       .sort({ createdAt: -1 })
       .skip(+skip)
       .limit(+limit)

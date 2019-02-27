@@ -22,7 +22,8 @@ async function login(req, res, next) {
         return next(err);
       } else if (user.isActive === true) {
         const jwtPayload = {
-          phone: user.phone
+          phone: user.phone,
+          name: `${user.lastName} ${user.firstName}`,
         };
 
         const jwtData = {
@@ -34,7 +35,10 @@ async function login(req, res, next) {
 
         return res.json({
           token,
-          phone: user.phone
+          phone: user.phone,
+          name: `${user.lastName} ${user.firstName}`,
+          role: user.role,
+          id: user._id,
         });
       }
       const err = new APIError('Tài khoản của bạn chưa kích hoạt', httpStatus.UNAUTHORIZED, true);

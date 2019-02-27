@@ -28,22 +28,41 @@ app.use(cookieParser());
 app.use(compress());
 app.use(methodOverride());
 
+app.use('/static', express.static('./public'));
 // secure apps by setting various HTTP headers
 app.use(helmet());
 
 // enable CORS - Cross Origin Resource Sharing
 app.use(cors());
 
+app.use((req, res, next) => {
+  // Website you wish to allow to connect
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+
+  // Request methods you wish to allow
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+  // Request headers you wish to allow
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  // Pass to next layer of middleware
+  next();
+});
+
 // enable detailed API logging in dev env
 if (config.env === 'development') {
-  expressWinston.requestWhitelist.push('body');
-  expressWinston.responseWhitelist.push('body');
-  app.use(expressWinston.logger({
-    winstonInstance,
-    meta: true, // optional: log meta data about request (defaults to true)
-    msg: 'HTTP {{req.method}} {{req.url}} {{res.statusCode}} {{res.responseTime}}ms',
-    colorStatus: true // Color the status code (default green, 3XX cyan, 4XX yellow, 5XX red).
-  }));
+  // expressWinston.requestWhitelist.push('body');
+  // expressWinston.responseWhitelist.push('body');
+  // app.use(expressWinston.logger({
+  //   winstonInstance,
+  //   meta: true, // optional: log meta data about request (defaults to true)
+  //   msg: 'HTTP {{req.method}} {{req.url}} {{res.statusCode}} {{res.responseTime}}ms',
+  //   colorStatus: true // Color the status code (default green, 3XX cyan, 4XX yellow, 5XX red).
+  // }));
 }
 
 // mount all routes on /api path

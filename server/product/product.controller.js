@@ -31,22 +31,24 @@ function create(req, res, next) {
     name: req.body.name,
     price: req.body.price,
     priceForEmploy: req.body.priceForEmploy,
-    amout: req.body.amout,
-    inventory: req.body.inventory,
+    amount: req.body.amount,
+    inventory: req.body.amount,
     quantitySold: req.body.quantitySold,
     cate: req.body.cate,
     size: req.body.size,
     color: req.body.color,
-    mainImage: req.body.mainImage,
+    mainImage: req.body.subImage ? req.body.subImage[0] : undefined,
     subImage: req.body.subImage,
     shortName: req.body.shortName,
     description: req.body.description,
-    createdBy: req.currentUser._id
+    createdBy: req.currentUser._id,
   });
-
   product.save()
     .then(savedProduct => res.json(savedProduct))
-    .catch(e => next(e));
+    .catch((e) => {
+      console.log(e);
+      next(e);
+    });
 }
 
 /**
@@ -56,17 +58,17 @@ function create(req, res, next) {
  * @returns {Product}
  */
 function update(req, res, next) {
-  const product = req.Product;
+  const product = req.product;
   product.name = req.body.name;
   product.price = req.body.price;
   product.priceForEmploy = req.body.priceForEmploy;
   product.amount = req.body.amount;
-  product.inventory = req.body.inventory;
-  product.quantitySold = req.body.quantitySold;
+  // product.inventory = req.body.inventory;
+  // product.quantitySold = req.body.quantitySold;
   product.cate = req.body.cate;
   product.size = req.body.size;
   product.color = req.body.color;
-  product.mainImage = req.body.mainImage;
+  product.mainImage = req.body.subImage ? req.body.subImage[0] : undefined;
   product.subImage = req.body.subImage;
   product.shortName = req.body.shortName;
   product.description = req.body.description;
@@ -82,7 +84,7 @@ function update(req, res, next) {
  * @returns {Product[]}
  */
 function list(req, res, next) {
-  const { limit = 50, skip = 0 } = req.query;
+  const { limit = 1000, skip = 0 } = req.query;
   Product.list({ limit, skip })
     .then(Products => res.json(Products))
     .catch(e => next(e));
@@ -93,8 +95,9 @@ function list(req, res, next) {
  * @returns {Product}
  */
 function remove(req, res, next) {
-  const product = req.Product;
-  product.remove()
+  const product = req.product;
+  product.isDeleted = true;
+  product.save()
     .then(deletedProduct => res.json(deletedProduct))
     .catch(e => next(e));
 }

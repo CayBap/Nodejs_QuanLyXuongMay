@@ -6,23 +6,36 @@ const APIError = require('../helpers/APIError');
  * ProductUser Schema
  */
 const ProductUserSchema = new mongoose.Schema({
+  nameForUser: String,
+  productName: String,
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },
-  amout: {
+  amount: {
     type: Number,
     required: true,
   },
-  sizes: [{
+  size: [{
     type: String,
   }],
-  colors: [{ type: String }],
+  color: [{ type: String }],
   productId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Product',
     required: true,
+  },
+  timeToEnd: String,
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
+  note: String,
+
+  finished: {
+    type: Boolean,
+    default: false
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
@@ -63,7 +76,7 @@ ProductUserSchema.statics = {
    * @returns {Promise<ProductUser[]>}
    */
   list({ skip = 0, limit = 50 } = {}) {
-    return this.find()
+    return this.find({ isDeleted: false })
       .sort({ createdAt: -1 })
       .skip(+skip)
       .limit(+limit)

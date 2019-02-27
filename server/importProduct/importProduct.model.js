@@ -22,7 +22,7 @@ const ImportProductSchema = new mongoose.Schema({
   timeToEnd: {
     type: String,
   },
-  amout: {
+  amount: {
     type: Number,
   },
   createdBy: {
@@ -30,7 +30,10 @@ const ImportProductSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  }
 }, {
   timestamps: true
 });
@@ -64,7 +67,7 @@ ImportProductSchema.statics = {
    * @returns {Promise<ImportProduct[]>}
    */
   list({ skip = 0, limit = 50 } = {}) {
-    return this.find()
+    return this.find({ isDeleted: false })
       .sort({ createdAt: -1 })
       .skip(+skip)
       .limit(+limit)

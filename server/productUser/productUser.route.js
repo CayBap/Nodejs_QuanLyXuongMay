@@ -11,7 +11,7 @@ router.route('/')
   .get(authCtrl.authen, productUserCtrl.list)
 
   /** POST /api/productUsers - Create new productUser */
-  .post(productUserCtrl.create);
+  .post(authCtrl.authen, productUserCtrl.create);
 
 router.route('/:productUserId')
   /** GET /api/productUsers/:productUserId - Get productUser */
@@ -20,8 +20,13 @@ router.route('/:productUserId')
   /** PUT /api/productUsers/:productUserId - Update productUser */
   .put(authCtrl.authen, productUserCtrl.update)
 
+  /** PUT /api/productUsers/:productUserId - Update productUser */
+  .patch(authCtrl.authen, productUserCtrl.updateStatus)
+
   /** DELETE /api/productUsers/:productUserId - Delete productUser */
   .delete(authCtrl.authen, productUserCtrl.remove);
+
+router.get('/user/:userId', authCtrl.authen, productUserCtrl.listByUser);
 
 /** Load productUser when API with productUserId route parameter is hit */
 router.param('productUserId', productUserCtrl.load);
