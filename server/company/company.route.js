@@ -1,4 +1,18 @@
 const express = require('express');
+
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+  destination(req, file, cb) {
+    cb(null, 'public/company');
+  },
+  filename(req, file, cb) {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  }
+});
+
+const upload = multer({ storage });
+
 // const validate = require('express-validation');
 // const paramValidation = require('../../config/param-validation');
 const companyCtrl = require('./company.controller');
@@ -8,22 +22,10 @@ const router = express.Router(); // eslint-disable-line new-cap
 
 router.route('/')
   /** GET /api/companys - Get list of companys */
-  .get(authCtrl.authen, companyCtrl.list)
-
-  /** POST /api/companys - Create new company */
-  .post(companyCtrl.create);
-
-router.route('/:companyId')
-  /** GET /api/companys/:companyId - Get company */
   .get(authCtrl.authen, companyCtrl.get)
 
-  /** PUT /api/companys/:companyId - Update company */
-  .put(authCtrl.authen, companyCtrl.update)
+  /** POST /api/companys - Create new company */
+  .post(upload.single('avatar'), companyCtrl.create);
 
-  /** DELETE /api/companys/:companyId - Delete company */
-  .delete(authCtrl.authen, companyCtrl.remove);
-
-/** Load company when API with companyId route parameter is hit */
-router.param('companyId', companyCtrl.load);
 
 module.exports = router;

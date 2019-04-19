@@ -37,10 +37,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  // companies: [{
-
-  //   type: mongoose.Schema.Types.ObjectId,
-  // }],
+  adress: String,
   gender: {
     type: Boolean,
     default: true,

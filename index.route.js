@@ -8,6 +8,7 @@ const importProductRoutes = require('./server/importProduct/importProduct.route'
 const exportProductRoutes = require('./server/exportProduct/exportProduct.route');
 const productUserRoutes = require('./server/productUser/productUser.route');
 const usserRoutes = require('./server/user/user.route');
+const roleRoutes = require('./server/role/role.route');
 
 
 const multer = require('multer');
@@ -66,6 +67,8 @@ router.use('/export-product', exportProductRoutes);
 router.use('/delivery', productUserRoutes);
 // mount auth routes at /delivery
 router.use('/user', usserRoutes);
+// mount auth routes at /role
+router.use('/role', roleRoutes);
 
 
 module.exports = router;

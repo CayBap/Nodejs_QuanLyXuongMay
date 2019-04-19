@@ -31,7 +31,7 @@ function create(req, res, next) {
   const user = new User({
     phone: req.body.phone,
     email: req.body.email,
-    avatar: req.body.avatar,
+    // avatar: req.body.avatar,
     lastName: req.body.lastName,
     firstName: req.body.firstName,
     dob: req.body.dob,
@@ -53,12 +53,14 @@ function create(req, res, next) {
  */
 function update(req, res, next) {
   const user = req.user;
-  user.avatar = req.body.avatar;
   user.lastName = req.body.lastName;
   user.firstName = req.body.firstName;
   user.dob = req.body.dob;
   user.companies = req.body.companies;
-  user.role = req.body.role;
+  if (req.body.role) {
+    user.role = req.body.role;
+  }
+
   user.save()
     .then(savedUser => res.json(savedUser))
     .catch(e => next(e));
@@ -71,8 +73,13 @@ function update(req, res, next) {
  * @returns {User[]}
  */
 function list(req, res, next) {
-  const { limit = 50, skip = 0 } = req.query;
-  User.list({ limit, skip })
+  const {
+    limit = 50, skip = 0
+  } = req.query;
+  User.list({
+    limit,
+    skip
+  })
     .then(users => res.json(users))
     .catch(e => next(e));
 }
@@ -83,12 +90,19 @@ function list(req, res, next) {
  * @returns {User[]}
  */
 function listUserDash(req, res, next) {
-  const { limit = 50, skip = 0 } = req.query;
-  User.list({ limit, skip })
+  const {
+    limit = 50, skip = 0
+  } = req.query;
+  User.list({
+    limit,
+    skip
+  })
     .then((users) => {
       let newUsers = [];
       newUsers = users.map(async (user) => {
-        const productUser = await ProductUser.find({ userId: user._id }).populate('productId');
+        const productUser = await ProductUser.find({
+          userId: user._id
+        }).populate('productId');
         return {
           user,
           productUser,
@@ -102,6 +116,31 @@ function listUserDash(req, res, next) {
     .catch(e => next(e));
 }
 
+function getProfile(req, res) {
+  // console.log(req.currentUser);
+  res.json(req.currentUser);
+}
+
+function updateProfile(req, res) {
+  // res.json(req.currentUser);
+  const { _id } = req.currentUser;
+  User.findById(_id).then((user) => {
+    if (req.file) {
+      user.avatar = req.file.filename;
+    }
+    user.lastName = req.body.lastName;
+    user.firstName = req.body.firstName;
+    user.dob = req.body.dob;
+    user.adress = req.body.adress;
+    user.email = req.body.email;
+    user.phone = req.body.phone;
+    user.gender = req.body.gender;
+
+    user.save().then((reusult) => {
+      res.json(reusult);
+    });
+  });
+}
 /**
  * Delete user.
  * @returns {User}
@@ -113,4 +152,14 @@ function remove(req, res, next) {
     .catch(e => next(e));
 }
 
-module.exports = { load, get, create, update, list, remove, listUserDash };
+module.exports = {
+  load,
+  get,
+  create,
+  update,
+  list,
+  remove,
+  listUserDash,
+  getProfile,
+  updateProfile
+};

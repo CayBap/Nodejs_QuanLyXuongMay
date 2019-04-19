@@ -13,13 +13,20 @@ const CompanySchema = new mongoose.Schema({
   shortName: {
     type: String,
   },
-  address: {
+  adress: {
     type: String,
   },
+  email: {
+    type: String,
+  },
+  phoneNumber: {
+    type: String,
+  },
+  fax: String,
+  avatar: String,
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
   },
 
 }, {
