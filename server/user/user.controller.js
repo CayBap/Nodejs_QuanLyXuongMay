@@ -91,8 +91,10 @@ function list(req, res, next) {
  */
 function listUserDash(req, res, next) {
   const {
-    limit = 50, skip = 0
+    limit = 50, skip = 0,
+    from, to,
   } = req.query;
+  console.log(new Date(from));
   User.list({
     limit,
     skip
@@ -100,9 +102,7 @@ function listUserDash(req, res, next) {
     .then((users) => {
       let newUsers = [];
       newUsers = users.map(async (user) => {
-        const productUser = await ProductUser.find({
-          userId: user._id
-        }).populate('productId');
+        const productUser = await ProductUser.find({ userId: user._id, createdAt: { $gte: new Date(from), $lt: new Date(to) } }).populate('productId');
         return {
           user,
           productUser,
@@ -151,6 +151,20 @@ function remove(req, res, next) {
     .then(deletedUser => res.json(deletedUser))
     .catch(e => next(e));
 }
+function exportBoard(req, res) {
+  const { from, to } = req.query;
+  ProductUser.find({ userId: req.params.userId, createdAt: { $gte: new Date(from), $lt: new Date(to) } }).populate('productId').then((result) => {
+    // res.json(result);
+    User.findById(req.params.userId).then((user) => {
+      res.json({
+        user,
+        products: result,
+      });
+    });
+  }).catch((err) => {
+    res.json(err);
+  });
+}
 
 module.exports = {
   load,
@@ -161,5 +175,6 @@ module.exports = {
   remove,
   listUserDash,
   getProfile,
-  updateProfile
+  updateProfile,
+  exportBoard,
 };

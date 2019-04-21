@@ -27,7 +27,7 @@ router.route('/')
 
 router.get('/boardEmploy', userCtrl.listUserDash);
 router.route('/profile').get(authCtrl.authen, userCtrl.getProfile).put(upload.single('avatar'), authCtrl.authen, userCtrl.updateProfile);
-
+router.get('/export/:userId', authCtrl.authen, userCtrl.exportBoard);
 router.route('/:userId')
   /** GET /api/users/:userId - Get user */
   .get(authCtrl.authen, userCtrl.get)
