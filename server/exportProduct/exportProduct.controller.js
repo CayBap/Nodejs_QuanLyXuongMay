@@ -1,4 +1,6 @@
 const ExportProduct = require('./exportProduct.model');
+const Product = require('../product/product.model');
+const Company = require('../company/company.model');
 
 /**
  * Load ExportProduct and append to req.
@@ -26,17 +28,31 @@ function get(req, res) {
  * @property {string} req.body.phone - The phone of ExportProduct.
  * @returns {ExportProduct}
  */
-function create(req, res, next) {
+async function create(req, res, next) {
+  const { totalPrice,
+    amount,
+    customer,
+    products, } = req.body;
+  await products.map(async (item) => {
+    const product = await Product.findById(item.productId);
+    product.inventory -= item.amount;
+    return product.save();
+  });
   const exportProduct = new ExportProduct({
-    name: req.body.name,
-    totalPrice: req.body.totalPrice,
-    timeToEnd: req.body.timeToEnd,
-    productId: req.body.productId,
-    amount: req.body.amount,
+    totalPrice,
+    amount,
+    products,
+    customer,
     createdBy: req.currentUser._id,
   });
   exportProduct.save()
-    .then(savedExportProduct => res.json(savedExportProduct))
+    .then(async (savedExportProduct) => {
+      const company = await Company.findOne();
+      res.json({
+        exportProduct: savedExportProduct,
+        company,
+      });
+    })
     .catch(e => next(e));
 }
 

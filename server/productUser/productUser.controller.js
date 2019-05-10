@@ -93,8 +93,9 @@ function list(req, res, next) {
 }
 
 function listByUser(req, res, next) {
-  console.log(req.params);
-  ProductUser.find({ userId: req.params.userId }).populate('productId').then((result) => {
+  const { from, to } = req.query;
+  const query = from === undefined || to === undefined ? { userId: req.params.userId } : { userId: req.params.userId, createdAt: { $gte: new Date(from), $lt: new Date(to) } };
+  ProductUser.find(query).populate('productId').then((result) => {
     res.json(result);
   }).catch((err) => {
     next(err);

@@ -31,7 +31,7 @@ function create(req, res, next) {
   const role = new Role({
     name: req.body.name,
     slug: changeToSlug(req.body.name),
-    parrent: req.body.parrent || undefined,
+    permistion: req.body.permistion,
     createdBy: req.currentUser._id,
     description: req.body.description
   });
@@ -52,7 +52,7 @@ function update(req, res, next) {
   role.name = req.body.name;
   role.slug = changeToSlug(req.body.name);
   role.description = req.body.description;
-  role.parrent = req.body.parrent;
+  role.permistion = req.body.permistion;
   role.save()
     .then(savedRole => res.json(savedRole))
     .catch(e => next(e));

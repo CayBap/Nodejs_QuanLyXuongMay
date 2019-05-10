@@ -6,27 +6,29 @@ const APIError = require('../helpers/APIError');
  * ExportProduct Schema
  */
 const ExportProductSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  shortName: {
-    type: String,
-  },
   totalPrice: {
     type: Number,
   },
-  timeToEnd: {
-    type: String,
+  amount: Number,
+  customer: {
+    name: String,
+    phone: String,
+    email: String,
   },
-  amount: {
-    type: Number,
-  },
-  productId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Product',
-    required: true,
-  },
+  products: [
+    {
+      name: String,
+      color: String,
+      size: String,
+      amount: Number,
+      price: Number,
+
+      productId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
+      }
+    }
+  ],
   isDeleted: {
     type: Boolean,
     default: false,

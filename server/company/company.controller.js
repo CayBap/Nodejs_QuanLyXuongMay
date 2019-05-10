@@ -25,7 +25,7 @@ async function create(req, res, next) {
     company.email = req.body.email;
     company.phoneNumber = req.body.phoneNumber;
     company.fax = req.body.fax;
-    company.avatar = req.file.filename;
+    company.avatar = req.file ? req.file.filename.avatar : company.avatar;
     company.save()
       .then(savedcompany => res.json(savedcompany))
       .catch(e => next(e));

@@ -3,6 +3,7 @@ const httpStatus = require('http-status');
 const APIError = require('../helpers/APIError');
 const config = require('../../config/config');
 const User = require('../user/user.model');
+const Role = require('../role/role.model');
 /**
  * Returns jwt token if valid username and password is provided
  * @param req
@@ -32,13 +33,15 @@ async function login(req, res, next) {
 
         const secret = config.jwtSecret;
         const token = jwt.sign(jwtPayload, secret, jwtData);
-
+        const permistion = await Role.findById(user.roleId || '');
         return res.json({
           token,
           phone: user.phone,
           name: `${user.lastName} ${user.firstName}`,
           role: user.role,
           id: user._id,
+          avatar: user.avatar,
+          permistion,
         });
       }
       const err = new APIError('Tài khoản của bạn chưa kích hoạt', httpStatus.UNAUTHORIZED, true);

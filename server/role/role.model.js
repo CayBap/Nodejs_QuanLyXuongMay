@@ -21,6 +21,13 @@ const RoleSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Role',
   },
+  permistion: [{
+    name: String,
+    code: String,
+    action: [{
+      type: String,
+    }],
+  }],
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

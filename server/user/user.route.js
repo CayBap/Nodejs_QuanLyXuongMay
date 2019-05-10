@@ -37,6 +37,7 @@ router.route('/:userId')
 
   /** DELETE /api/users/:userId - Delete user */
   .delete(authCtrl.authen, userCtrl.remove);
+router.post('/addLog', authCtrl.authen, userCtrl.addLog);
 
 
 /** Load user when API with userId route parameter is hit */

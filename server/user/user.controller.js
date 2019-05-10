@@ -1,5 +1,7 @@
 const User = require('./user.model');
 const ProductUser = require('../productUser/productUser.model');
+const Company = require('../company/company.model');
+const Log = require('../log/log.model');
 
 /**
  * Load user and append to req.
@@ -38,6 +40,7 @@ function create(req, res, next) {
     companies: req.body.companies,
     role: req.body.role,
     password: req.body.password,
+    roleId: req.body.roleId || undefined,
   });
 
   user.save()
@@ -60,6 +63,10 @@ function update(req, res, next) {
   if (req.body.role) {
     user.role = req.body.role;
   }
+  if (req.body.roleId) {
+    user.roleId = req.body.roleId;
+  }
+
 
   user.save()
     .then(savedUser => res.json(savedUser))
@@ -91,21 +98,22 @@ function list(req, res, next) {
  */
 function listUserDash(req, res, next) {
   const {
-    limit = 50, skip = 0,
+    // limit = 50, skip = 0,
     from, to,
   } = req.query;
-  console.log(new Date(from));
-  User.list({
-    limit,
-    skip
+  User.find({
+    role: 'staff'
   })
     .then((users) => {
       let newUsers = [];
       newUsers = users.map(async (user) => {
-        const productUser = await ProductUser.find({ userId: user._id, createdAt: { $gte: new Date(from), $lt: new Date(to) } }).populate('productId');
+        const query = from === undefined || to === undefined ? { userId: user._id } : { userId: user._id, createdAt: { $gte: new Date(from), $lt: new Date(to) } };
+        const productUser = await ProductUser.find(query).populate('productId');
+        const log = await Log.find({ userId: user._id }).populate('userId').populate('createdBy');
         return {
           user,
           productUser,
+          log,
         };
       });
       Promise.all(newUsers).then((reusult) => {
@@ -156,14 +164,28 @@ function exportBoard(req, res) {
   ProductUser.find({ userId: req.params.userId, createdAt: { $gte: new Date(from), $lt: new Date(to) } }).populate('productId').then((result) => {
     // res.json(result);
     User.findById(req.params.userId).then((user) => {
-      res.json({
-        user,
-        products: result,
+      Company.findOne().then((company) => {
+        res.json({
+          user,
+          products: result,
+          company,
+        });
       });
     });
   }).catch((err) => {
     res.json(err);
   });
+}
+function addLog(req, res, next) {
+  const { userId, salary, } = req.body;
+  const log = new Log({
+    createdBy: req.currentUser._id,
+    userId,
+    salary,
+  });
+  log.save().then((result) => {
+    res.json(result);
+  }).catch(err => next(err));
 }
 
 module.exports = {
@@ -177,4 +199,5 @@ module.exports = {
   getProfile,
   updateProfile,
   exportBoard,
+  addLog,
 };

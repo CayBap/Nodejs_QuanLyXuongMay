@@ -55,6 +55,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: 'staff',
   },
+  roleId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Role',
+  },
   // facebook,phone,google login
   facebook: {},
   google: {},
